@@ -1,7 +1,10 @@
 from random import randrange
 
 class Card:
+    ERR_MESSAGE = "Cards can only be compared to other card objects."
+
     card_values = {
+        1: "ACE",
         11: "JACK",
         12: "QUEEN",
         13: "KING"
@@ -10,9 +13,30 @@ class Card:
     def __init__(self):
         self.value = randrange(1,14)
 
+
     def __str__(self):
         return self.card_values.get(self.value, str(self.value))
+
+
+    def __ge__(self, other):
+        if not isinstance(other, Card):
+            raise ValueError(self.ERR_MESSAGE)
         
+        return self.value >= other.value
+    
+    def __gt__(self, other):
+        if not isinstance(other, Card):
+            raise ValueError(self.ERR_MESSAGE)
+        
+        return self.value > other.value
+
+
+    def __lt__(self, other):
+        if not isinstance(other, Card):
+            raise ValueError(self.ERR_MESSAGE)
+        
+        return self.value < other.value
+
 
 class Hand:
     cards = []
@@ -23,8 +47,17 @@ class Hand:
 
     def calculate_value(self):
         total = 0
+
+        self.cards.sort(reverse=True)
+
         for card in self.cards:
-            total += min(card.value, 10) # parse face cards down to numeric value
+            if str(card) == "ACE":              # allows wildcard functionality for aces
+                if total + 11 > 21:
+                    total += 1
+                else:
+                    total += 11
+            else:
+                total += min(card.value, 10)    # catches face cards
 
         return total
 
