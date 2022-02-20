@@ -65,26 +65,65 @@ class Hand:
         return ", ".join([str(card) for card in self.cards])
 
 
-class Game:
-    def __init__(self):
+class Player:
+    ERR_MESSAGE = "Players can only be compared to other player objects."
+
+    def __init__(self, name: str):
+        self.name = name
         self.hand = Hand()
 
     def game_over(self):
         return self.hand.calculate_value() > 21
 
-    def play_game(self):
-        while True:
-            answer = input("It is your turn. Press '1' to draw a card or press 'x' to end the game: ")
+    def draw_card(self):
+        self.hand.draw_card()
+    
+    def calculate_hand(self):
+        return self.hand.calculate_value()
 
-            if answer == 'x':
-                print(f"You got {self.hand.calculate_value()}.")
-                break
-            elif answer == "1":
-                self.hand.draw_card()
-                if self.game_over():
-                    print(f"{self.hand.calculate_value()}! You lose!")
+    def __str__(self):
+        return self.name
+    
+    def __ge__(self, other):
+        if not isinstance(other, Player):
+            raise ValueError(self.ERR_MESSAGE)
+        
+        return self.calculate_hand() > other.calculate_hand()
+    
+    def __lt__(self, other):
+        if not isinstance(other, Player):
+            raise ValueError(self.ERR_MESSAGE)
+        
+        return self.calculate_hand() < other.calculate_hand()
+
+
+class Game:
+    players = list()
+
+    def play_game(self):
+        number_players = int(input("How many players: "))
+
+        for i in range(number_players):
+            self.players.append(Player(name="Player " + str(i + 1)))
+
+        for player in self.players:
+            print(player)
+
+        for i in range(len(self.players)):
+            while True:
+                answer = input(str(self.players[i]) + "'s turn. Press '1' to draw a card or press 'x' to end the game: ")
+
+                if answer == 'x':
+                    print(f"You got {self.players[i].calculate_hand()}.")
                     break
+                elif answer == "1":
+                    self.players[i].draw_card()
+                    if self.players[i].game_over():
+                        print(f"{self.players[i].calculate_hand()}! You lose!")
+                        break
+                    else:
+                        print(f"Your current hand: {self.players[i].hand}.")
                 else:
-                    print(f"Your current hand: {self.hand}.")
-            else:
-                continue
+                    continue
+
+        print(str(max(self.players)) + " wins!")
