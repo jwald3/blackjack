@@ -75,6 +75,8 @@ class Player:
     def game_over(self):
         return self.hand.calculate_value() > 21
 
+    # bring in functionality for hand methods
+
     def draw_card(self):
         self.hand.draw_card()
     
@@ -84,6 +86,8 @@ class Player:
     def __str__(self):
         return self.name
     
+    # comparison operators for finding winning player 
+
     def __ge__(self, other):
         if not isinstance(other, Player):
             raise ValueError(self.ERR_MESSAGE)
@@ -104,17 +108,15 @@ class Game:
         number_players = int(input("How many players: "))
 
         for i in range(number_players):
-            self.players.append(Player(name="Player " + str(i + 1)))
+            self.players.append(Player(name="Player " + str(i + 1)))    # create objects for each player— name enables easy string representation
 
-        for player in self.players:
-            print(player)
 
-        for i in range(len(self.players)):
-            while True:
-                answer = input(str(self.players[i]) + "'s turn. Press '1' to draw a card or press 'x' to end the game: ")
-
-                if answer == 'x':
-                    print(f"You got {self.players[i].calculate_hand()}.")
+        for i in range(len(self.players)):                                                                                          # for each player object, there are a few options:
+            while True:                                                                                                             # 1. x — ends turn 
+                answer = input(str(self.players[i]) + "'s turn. Press '1' to draw a card or press 'x' to end the game: ")           # 2. 1 — draw a card
+                                                                                                                                    #   a. either the card goes over 21 and the player automatically loses 
+                if answer == 'x':                                                                                                   #   b. the player draws a card and they remain in play
+                    print(f"You got {self.players[i].calculate_hand()}.")                                                           ## Each player should have their own hand of cards ##    
                     break
                 elif answer == "1":
                     self.players[i].draw_card()
