@@ -39,7 +39,8 @@ class Card:
 
 
 class Hand:
-    cards = []
+    def __init__(self):
+        self.cards = []
 
     def draw_card(self):
         self.cards.append(Card())
