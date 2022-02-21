@@ -75,7 +75,7 @@ class Player:
     def game_over(self):
         return self.hand.calculate_value() > 21
 
-    # bring in functionality for hand methods
+    # bring in functionality for hand methods for direct access (as opposed to calling player.hand.draw_card)
 
     def draw_card(self):
         self.hand.draw_card()
